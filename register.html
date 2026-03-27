@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account – ExpenseTracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f4f0; --surface: #ffffff; --border: #e8e6e0;
+    --text: #1a1917; --muted: #8a8880; --ink: #1a1917;
+    --red: #c0392b; --green: #2a7c5f;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--ink); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; position: relative; overflow: hidden; }
+
+  body::before { content: ''; position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(42,124,95,0.15) 0%, transparent 70%); top: -100px; right: -100px; pointer-events: none; }
+  body::after { content: ''; position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(44,95,138,0.12) 0%, transparent 70%); bottom: -80px; left: -80px; pointer-events: none; }
+
+  .card {
+    background: var(--surface); border-radius: 20px; padding: 48px;
+    width: 100%; max-width: 440px; position: relative; z-index: 1;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+    animation: slideUp 0.4s ease;
+  }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+  .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+  .logo-icon { width: 40px; height: 40px; background: var(--ink); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; }
+  .logo-text { font-size: 18px; font-weight: 600; }
+
+  h2 { font-family: 'DM Serif Display', serif; font-size: 30px; font-weight: 400; margin-bottom: 6px; }
+  .sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+
+  .form-group { margin-bottom: 16px; }
+  label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 7px; color: var(--ink); }
+  input {
+    width: 100%; padding: 12px 16px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-family: inherit; font-size: 14px;
+    background: var(--bg); color: var(--text); outline: none; transition: border 0.2s;
+  }
+  input:focus { border-color: var(--ink); background: #fff; }
+  input.valid { border-color: var(--green); }
+  input.invalid { border-color: var(--red); }
+
+  .error { color: var(--red); font-size: 12px; margin-top: 6px; display: none; }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 5px; }
+
+  /* Password strength bar */
+  .strength-wrap { margin-top: 8px; }
+  .strength-bar { height: 4px; border-radius: 4px; background: var(--border); overflow: hidden; }
+  .strength-fill { height: 100%; border-radius: 4px; width: 0; transition: width 0.3s, background 0.3s; }
+  .strength-label { font-size: 11px; margin-top: 4px; color: var(--muted); }
+
+  .btn { width: 100%; padding: 13px; background: var(--ink); color: #fff; border: none; border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 8px; transition: opacity 0.2s, transform 0.15s; }
+  .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  .switch { text-align: center; margin-top: 24px; font-size: 13px; color: var(--muted); }
+  .switch a { color: var(--ink); font-weight: 500; text-decoration: underline; }
+
+  .terms { font-size: 12px; color: var(--muted); text-align: center; margin-top: 16px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">💰</div>
+    <div class="logo-text">ExpenseTracker</div>
+  </div>
+
+  <h2>Create account</h2>
+  <p class="sub">Start tracking your expenses today — it's free</p>
+
+  <div class="form-group">
+    <label for="name">Full name</label>
+    <input type="text" id="name" placeholder="John Doe" oninput="validateName()">
+    <div class="error" id="nameError">Please enter your full name.</div>
+  </div>
+
+  <div class="form-group">
+    <label for="email">Email address</label>
+    <input type="email" id="email" placeholder="you@example.com" oninput="validateEmail()">
+    <div class="error" id="emailError">Please enter a valid email.</div>
+  </div>
+
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="Min. 8 characters" oninput="checkStrength()">
+    <div class="strength-wrap">
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+      <div class="strength-label" id="strengthLabel"></div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="confirm">Confirm password</label>
+    <input type="password" id="confirm" placeholder="Repeat password" oninput="validateConfirm()">
+    <div class="error" id="confirmError">Passwords do not match.</div>
+  </div>
+
+  <button class="btn" onclick="handleSignup()">Create account</button>
+
+  <p class="terms">By creating an account you agree to our Terms of Service and Privacy Policy.</p>
+
+  <div class="switch">
+    Already have an account? <a href="login.html">Sign in</a>
+  </div>
+</div>
+
+<script>
+  function getUsers() { return JSON.parse(localStorage.getItem('et_users') || '[]'); }
+  function saveUsers(u) { localStorage.setItem('et_users', JSON.stringify(u)); }
+
+  function validateName() {
+    const v = document.getElementById('name').value.trim();
+    const ok = v.length >= 2;
+    setField('name', ok, 'nameError');
+    return ok;
+  }
+
+  function validateEmail() {
+    const v = document.getElementById('email').value.trim();
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    setField('email', ok, 'emailError', 'Please enter a valid email.');
+    return ok;
+  }
+
+  function validateConfirm() {
+    const p = document.getElementById('password').value;
+    const c = document.getElementById('confirm').value;
+    const ok = p === c && c.length > 0;
+    setField('confirm', ok, 'confirmError', 'Passwords do not match.');
+    return ok;
+  }
+
+  function setField(id, ok, errId, msg) {
+    const inp = document.getElementById(id);
+    const err = document.getElementById(errId);
+    if (ok) { inp.classList.add('valid'); inp.classList.remove('invalid'); err.style.display = 'none'; }
+    else if (inp.value) { inp.classList.add('invalid'); inp.classList.remove('valid'); if (msg) err.textContent = msg; err.style.display = 'block'; }
+  }
+
+  function checkStrength() {
+    const p = document.getElementById('password').value;
+    let score = 0;
+    if (p.length >= 8) score++;
+    if (p.length >= 12) score++;
+    if (/[A-Z]/.test(p)) score++;
+    if (/[0-9]/.test(p)) score++;
+    if (/[^A-Za-z0-9]/.test(p)) score++;
+
+    const fill = document.getElementById('strengthFill');
+    const label = document.getElementById('strengthLabel');
+    const levels = [
+      { w: '0%', color: '', text: '' },
+      { w: '25%', color: '#e74c3c', text: 'Weak' },
+      { w: '50%', color: '#f39c12', text: 'Fair' },
+      { w: '75%', color: '#3498db', text: 'Good' },
+      { w: '100%', color: '#2a7c5f', text: 'Strong' },
+    ];
+    const lvl = levels[Math.min(score, 4)];
+    fill.style.width = lvl.w;
+    fill.style.background = lvl.color;
+    label.textContent = lvl.text;
+    label.style.color = lvl.color;
+  }
+
+  function handleSignup() {
+    const name  = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const pass  = document.getElementById('password').value;
+    const conf  = document.getElementById('confirm').value;
+
+    const ok = validateName() & validateEmail() & validateConfirm();
+    if (!ok) return;
+
+    if (pass.length < 8) {
+      document.getElementById('password').classList.add('invalid');
+      return;
+    }
+
+    const users = getUsers();
+    if (users.find(u => u.email === email)) {
+      const err = document.getElementById('emailError');
+      err.textContent = 'This email is already registered.';
+      err.style.display = 'block';
+      document.getElementById('email').classList.add('invalid');
+      return;
+    }
+
+    const newUser = { name, email, password: pass, expenses: [] };
+    users.push(newUser);
+    saveUsers(users);
+    localStorage.setItem('et_session', JSON.stringify(newUser));
+    window.location.href = 'dashboard.html';
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleSignup(); });
+  if (localStorage.getItem('et_session')) window.location.href = 'dashboard.html';
+</script>
+</body>
+</html>
