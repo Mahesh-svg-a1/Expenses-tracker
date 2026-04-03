@@ -159,6 +159,18 @@
   .toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 2000; opacity: 0; transform: translateY(12px); transition: all 0.3s; pointer-events: none; }
   .toast.show { opacity: 1; transform: translateY(0); }
 
+  /* ── DELETE CONFIRM MODAL ── */
+  .delete-modal { background: var(--surface); border-radius: 16px; padding: 32px; width: 100%; max-width: 400px; animation: slideUp 0.25s ease; box-shadow: 0 24px 80px rgba(0,0,0,0.2); text-align: center; }
+  .delete-modal .del-icon { width: 56px; height: 56px; background: var(--red-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+  .delete-modal h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+  .delete-modal p { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+  .delete-modal .del-name { font-weight: 600; color: var(--text); }
+  .delete-actions { display: flex; gap: 10px; justify-content: center; }
+  .btn-del-cancel { padding: 10px 24px; border: 1.5px solid var(--border); border-radius: 9px; background: none; font-family: inherit; font-size: 14px; cursor: pointer; color: var(--text); transition: all 0.15s; font-weight: 500; }
+  .btn-del-cancel:hover { background: var(--bg); }
+  .btn-del-confirm { padding: 10px 24px; background: var(--red); color: #fff; border: none; border-radius: 9px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
+  .btn-del-confirm:hover { opacity: 0.85; }
+
   /* ── PAGES ── */
   .page { display: none; animation: fadeIn 0.3s ease; }
   .page.active { display: block; }
@@ -203,7 +215,7 @@
       <div class="user-avatar" id="sidebarAvatar">U</div>
       <div>
         <div class="user-name"  id="sidebarName">User</div>
-        <div class="user-email" id="sidebarEmail">user@example.com</div>
+        <div class="user-email" id="sidebarEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="abded8ced9ebced3cac6dbc7ce85c8c4c6">[email&#160;protected]</a></div>
       </div>
     </div>
     <button class="btn-logout" onclick="handleLogout()">
@@ -278,7 +290,7 @@
   <div class="page" id="page-expenses">
     <div class="page-header">
       <h1>Expenses</h1>
-      <p>Manage and track all your expenses</p>
+      <p>All your expenses sorted by date — updates instantly when changes are made</p>
     </div>
     <div class="expenses-toolbar">
       <div class="search-box">
@@ -292,14 +304,20 @@
         <option>Bills & Utilities</option><option>Healthcare</option>
         <option>Education</option><option>Other</option>
       </select>
+      <select class="filter-select" id="sortFilter" onchange="renderExpenses()">
+        <option value="date-desc">Newest First</option>
+        <option value="date-asc">Oldest First</option>
+        <option value="amount-desc">Highest Amount</option>
+        <option value="amount-asc">Lowest Amount</option>
+      </select>
       <button class="btn-add" onclick="openModal()">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Expense
       </button>
     </div>
     <div class="expenses-table">
-      <div class="table-header">
-        <span>Description</span><span>Category</span><span>Amount</span><span>Date</span><span></span>
+      <div class="table-header" style="grid-template-columns: 1.8fr 1.2fr 1fr 1fr 1.2fr 80px;">
+        <span>Description</span><span>Category</span><span>Amount</span><span>Date</span><span>Note</span><span></span>
       </div>
       <div id="expenseRows"></div>
     </div>
@@ -358,6 +376,10 @@
         <option>Education</option><option>Other</option>
       </select>
     </div>
+    <div class="form-group">
+      <label>Note <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+      <input type="text" id="mNote" placeholder="e.g. Monthly subscription, work lunch...">
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
       <button class="btn-save"   onclick="saveExpense()">Save Expense</button>
@@ -367,7 +389,22 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
+<!-- DELETE CONFIRMATION MODAL -->
+<div class="modal-overlay" id="deleteOverlay">
+  <div class="delete-modal">
+    <div class="del-icon">
+      <svg width="24" height="24" fill="none" stroke="#c0392b" stroke-width="2" viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+    </div>
+    <h3>Delete Expense?</h3>
+    <p>Are you sure you want to delete <span class="del-name" id="deleteExpenseName"></span>? This action cannot be undone.</p>
+    <div class="delete-actions">
+      <button class="btn-del-cancel" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn-del-confirm" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ─── CONSTANTS ────────────────────────────────────────
 const CAT_ICONS = { 'Food & Dining':'🍽️','Transportation':'🚗','Entertainment':'🎬','Shopping':'🛍️','Bills & Utilities':'⚡','Healthcare':'💊','Education':'📚','Other':'📌' };
 const CAT_COLORS = { 'Food & Dining':'#e74c3c','Transportation':'#3498db','Entertainment':'#9b59b6','Shopping':'#e91e8c','Bills & Utilities':'#2ecc71','Healthcare':'#f39c12','Education':'#1abc9c','Other':'#95a5a6' };
@@ -508,21 +545,30 @@ function buildRecentTx(exp) {
 
 // ─── EXPENSES ────────────────────────────────────────
 function renderExpenses() {
-  const q   = (document.getElementById('searchInput')?.value||'').toLowerCase();
-  const cat = document.getElementById('catFilter')?.value||'';
-  const list= getExpenses().filter(e=>
-    (!q || e.desc.toLowerCase().includes(q)||e.category.toLowerCase().includes(q)) &&
+  const q      = (document.getElementById('searchInput')?.value||'').toLowerCase();
+  const cat    = document.getElementById('catFilter')?.value||'';
+  const sort   = document.getElementById('sortFilter')?.value||'date-desc';
+
+  let list = getExpenses().filter(e=>
+    (!q || e.desc.toLowerCase().includes(q) || e.category.toLowerCase().includes(q) || (e.note||'').toLowerCase().includes(q)) &&
     (!cat || e.category===cat)
-  ).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  );
+
+  // Sort
+  if(sort==='date-desc')   list.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(sort==='date-asc')    list.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(sort==='amount-desc') list.sort((a,b)=>b.amount-a.amount);
+  if(sort==='amount-asc')  list.sort((a,b)=>a.amount-b.amount);
 
   const el = document.getElementById('expenseRows');
   if(!list.length){ el.innerHTML='<div style="padding:32px;text-align:center;color:var(--muted)">No expenses found.</div>'; return; }
   el.innerHTML = list.map(e=>`
-    <div class="table-row">
+    <div class="table-row" style="grid-template-columns:1.8fr 1.2fr 1fr 1fr 1.2fr 80px;">
       <span class="row-name">${CAT_ICONS[e.category]||'📌'} ${e.desc}</span>
       <span class="row-cat"><span class="${CAT_CLASS[e.category]||'cat-other'}">${e.category}</span></span>
       <span class="row-amount">${fmt(e.amount)}</span>
       <span class="row-date">${fmtDate(e.date)}</span>
+      <span class="row-date" style="color:var(--muted);font-size:12px;">${e.note ? '📝 '+e.note : '<span style="color:#ccc">—</span>'}</span>
       <span class="row-actions">
         <button class="btn-icon" onclick="editExpense(${e.id})" title="Edit">
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -599,11 +645,13 @@ function openModal(id=null) {
     document.getElementById('mAmount').value= e.amount;
     document.getElementById('mDate').value  = e.date;
     document.getElementById('mCat').value   = e.category;
+    document.getElementById('mNote').value  = e.note||'';
   } else {
     document.getElementById('mDesc').value='';
     document.getElementById('mAmount').value='';
     document.getElementById('mDate').value=new Date().toISOString().slice(0,10);
     document.getElementById('mCat').value='Food & Dining';
+    document.getElementById('mNote').value='';
   }
   document.getElementById('modalOverlay').classList.add('open');
 }
@@ -614,24 +662,44 @@ function saveExpense() {
   const amount=parseFloat(document.getElementById('mAmount').value);
   const date=document.getElementById('mDate').value;
   const category=document.getElementById('mCat').value;
+  const note=document.getElementById('mNote').value.trim();
   if(!desc||isNaN(amount)||!date){ showToast('Please fill all fields'); return; }
 
   if(editingId){
     const idx=currentUser.expenses.findIndex(e=>e.id===editingId);
-    if(idx>=0) currentUser.expenses[idx]={id:editingId,desc,amount,date,category};
+    if(idx>=0) currentUser.expenses[idx]={id:editingId,desc,amount,date,category,note};
     showToast('Expense updated');
   } else {
-    currentUser.expenses.push({id:Date.now(),desc,amount,date,category});
+    currentUser.expenses.push({id:Date.now(),desc,amount,date,category,note});
     showToast('Expense added');
   }
   saveUser(); closeModal(); renderExpenses();
 }
 
 function editExpense(id){ openModal(id); }
-function deleteExpense(id){
-  if(!confirm('Delete this expense?')) return;
-  currentUser.expenses=currentUser.expenses.filter(e=>e.id!==id);
-  saveUser(); renderExpenses(); showToast('Expense deleted');
+
+let pendingDeleteId = null;
+
+function deleteExpense(id) {
+  const expense = getExpenses().find(e => e.id === id);
+  if (!expense) return;
+  pendingDeleteId = id;
+  document.getElementById('deleteExpenseName').textContent = '"' + expense.desc + '"';
+  document.getElementById('deleteOverlay').classList.add('open');
+}
+
+function closeDeleteModal() {
+  pendingDeleteId = null;
+  document.getElementById('deleteOverlay').classList.remove('open');
+}
+
+function confirmDelete() {
+  if (!pendingDeleteId) return;
+  currentUser.expenses = currentUser.expenses.filter(e => e.id !== pendingDeleteId);
+  saveUser();
+  closeDeleteModal();
+  renderExpenses();
+  showToast('Expense deleted successfully');
 }
 
 // ─── TOAST ───────────────────────────────────────────
@@ -642,6 +710,7 @@ function showToast(msg){
 }
 
 document.getElementById('modalOverlay').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+document.getElementById('deleteOverlay').addEventListener('click',function(e){ if(e.target===this) closeDeleteModal(); });
 </script>
 </body>
 </html>
