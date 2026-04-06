@@ -1,0 +1,706 @@
+﻿/* public/assets/css/styles.css */
+
+/* ==================================================
+   1. Theme Variables
+================================================== */
+:root {
+  --bg-main: #0f172a;
+  --bg-soft: #15213a;
+  --panel: rgba(255, 255, 255, 0.06);
+  --panel-hover: rgba(255, 255, 255, 0.09);
+  --border: rgba(255, 255, 255, 0.14);
+
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
+  --text-soft: #94a3b8;
+
+  --brand: #38bdf8;
+  --brand-dark: #0ea5e9;
+  --accent: #22c55e;
+  --warning: #f59e0b;
+  --danger: #fb7185;
+
+  --shadow-main: 0 18px 40px rgba(0, 0, 0, 0.28);
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 20px;
+  --space-5: 24px;
+
+  --max-width: 1180px;
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ==================================================
+   2. Reset And Base
+================================================== */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 32%),
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 28%),
+    linear-gradient(180deg, #111827 0%, var(--bg-main) 100%);
+}
+
+a {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+/* Keep links readable without feeling too loud. */
+a:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: clamp(24px, 2vw, 32px);
+  margin-bottom: var(--space-2);
+}
+
+h2 {
+  font-size: 19px;
+  margin-bottom: var(--space-2);
+}
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+/* ==================================================
+   3. Small Utility Classes
+================================================== */
+.muted {
+  color: var(--text-muted);
+}
+
+.small {
+  font-size: 13px;
+}
+
+.strong {
+  font-weight: 700;
+}
+
+.right {
+  text-align: right;
+}
+
+.danger {
+  color: var(--danger);
+}
+
+.inline {
+  display: inline;
+}
+
+.truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ==================================================
+   4. Main Layout
+================================================== */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 14px 18px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.logo {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.28), rgba(34, 197, 94, 0.20));
+  border: 1px solid var(--border);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.brand-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.brand-sub {
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.content {
+  width: min(var(--max-width), calc(100% - 32px));
+  margin: 24px auto 40px;
+  flex: 1;
+}
+
+.footer {
+  border-top: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.15);
+  padding: 18px;
+}
+
+.footer-inner {
+  width: min(var(--max-width), calc(100% - 32px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ==================================================
+   5. Navigation
+================================================== */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 12px;
+  color: var(--text-main);
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+
+.nav-link:hover {
+  background: var(--panel);
+  border-color: var(--border);
+  text-decoration: none;
+}
+
+.nav-sep {
+  width: 1px;
+  height: 26px;
+  background: var(--border);
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  font-size: 13px;
+}
+
+/* ==================================================
+   6. Common Containers
+================================================== */
+.card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-main);
+}
+
+.card.inner {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: none;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: 14px;
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.two-col {
+  grid-template-columns: 1.2fr 0.9fr;
+}
+
+.stats-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: 18px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ==================================================
+   7. Buttons
+================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 15px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.26), rgba(14, 165, 233, 0.18));
+  color: var(--text-main);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease, opacity 0.15s ease;
+}
+
+.btn:hover {
+  text-decoration: none;
+  filter: brightness(1.06);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+}
+
+.btn-danger {
+  background: rgba(251, 113, 133, 0.12);
+  border-color: rgba(251, 113, 133, 0.35);
+}
+
+.btn-sm {
+  padding: 7px 10px;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ==================================================
+   8. Forms
+================================================== */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+input,
+select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: rgba(15, 23, 42, 0.55);
+  color: var(--text-main);
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+}
+
+.hint {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.hint.error {
+  color: var(--danger);
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.auth-links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ==================================================
+   9. Tables And Lists
+================================================== */
+.table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 140px 160px 1fr 140px 190px;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.row.head {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-soft);
+  font-size: 12px;
+  padding: 2px 4px;
+}
+
+.checklist {
+  margin: 12px 0 0;
+  padding-left: 18px;
+}
+
+.checklist li {
+  margin: 8px 0;
+}
+
+/* ==================================================
+   10. Auth Pages
+================================================== */
+.auth-wrap {
+  display: grid;
+  grid-template-columns: 1fr 0.9fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.auth-card h1 {
+  margin-bottom: 6px;
+}
+
+.auth-side p {
+  line-height: 1.6;
+}
+
+.mini-stat {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.mini-stat-label {
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.mini-stat-value {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ==================================================
+   11. Dashboard Cards
+================================================== */
+.stat {
+  padding: 18px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.stat-value {
+  margin-top: 8px;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.stat-sub {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.qa {
+  display: block;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.35);
+  color: var(--text-main);
+}
+
+.qa:hover {
+  background: var(--panel-hover);
+  text-decoration: none;
+}
+
+.qa-title {
+  font-weight: 700;
+}
+
+.qa-sub {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+/* ==================================================
+   12. Flash Messages And Alerts
+================================================== */
+.flash-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.flash {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.flash-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+.flash-success .flash-dot {
+  background: var(--accent);
+}
+
+.flash-warning .flash-dot {
+  background: var(--warning);
+}
+
+.flash-danger .flash-dot {
+  background: var(--danger);
+}
+
+.alert {
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(251, 113, 133, 0.35);
+  background: rgba(251, 113, 133, 0.1);
+}
+
+/* ==================================================
+   13. Pills And Small UI Parts
+================================================== */
+.pill-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.pill-x {
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(251, 113, 133, 0.35);
+  border-radius: 999px;
+  background: rgba(251, 113, 133, 0.1);
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.pill-x:hover {
+  filter: brightness(1.08);
+}
+
+/* ==================================================
+   14. Responsive Sections
+================================================== */
+@media (max-width: 980px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .row {
+    grid-template-columns: 120px 140px 1fr 120px 160px;
+  }
+
+  .nav-sep {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .auth-wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .row {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .row > div:nth-child(1)::before {
+    content: "Date: ";
+    color: var(--text-soft);
+    font-size: 12px;
+  }
+
+  .row > div:nth-child(2)::before {
+    content: "Category: ";
+    color: var(--text-soft);
+    font-size: 12px;
+  }
+
+  .row > div:nth-child(3)::before {
+    content: "Note: ";
+    color: var(--text-soft);
+    font-size: 12px;
+  }
+
+  .row > div:nth-child(4)::before {
+    content: "Amount: ";
+    color: var(--text-soft);
+    font-size: 12px;
+  }
+
+  .row.head {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .stats-grid,
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .page-head,
+  .auth-links,
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
